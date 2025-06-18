@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube - Trending American News</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --bg-color: #0f0f0f;
+      --text-color: #ffffff;
+      --header-bg: #181818;
+      --search-bg: #212121;
+      --border-color: #303030;
+      --category-bg: #303030;
+      --category-text: #aaa;
+      --card-bg: #0f0f0f;
+      --sidebar-bg: #181818;
+    }
+    .light-theme {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --header-bg: #f9f9f9;
+      --search-bg: #f1f1f1;
+      --border-color: #d1d1d1;
+      --category-bg: #e0e0e0;
+      --category-text: #666;
+      --card-bg: #ffffff;
+      --sidebar-bg: #f9f9f9;
+    }
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      display: flex;
+    }
+    /* Sidebar Styles */
+    .sidebar {
+      width: 240px;
+      background: var(--sidebar-bg);
+      color: var(--text-color);
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      overflow-y: hidden;
+      padding-top: 16px;
+      transition: width 0.3s ease, background-color 0.3s, color 0.3s;
+    }
+    .sidebar.collapsed {
+      width: 72px;
+    }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      margin-bottom: 16px;
+    }
+    .sidebar-logo {
+      margin-left: 8px;
+      height: 24px;
+    }
+    .sidebar-toggle {
+      cursor: pointer;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 24px;
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--text-color);
+    }
+    .sidebar-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .light-theme .sidebar-item:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    .sidebar-item i {
+      margin-right: 24px;
+      font-size: 20px;
+      color: var(--text-color);
+    }
+    .sidebar.collapsed .sidebar-item i {
+      margin-right: 0;
+      font-size: 24px;
+    }
+    .sidebar-divider {
+      border-top: 1px solid var(--border-color);
+      margin: 8px 0;
+    }
+    .sidebar-section-title {
+      padding: 12px 24px;
+      font-size: 14px;
+      color: var(--category-text);
+      text-transform: uppercase;
+    }
+    .sidebar.collapsed .sidebar-item span,
+    .sidebar.collapsed .sidebar-section-title,
+    .sidebar.collapsed .sidebar-logo {
+      display: none;
+    }
+    /* Main Content Adjustment */
+    .main-content-wrapper {
+      margin-left: 240px;
+      width: calc(100% - 240px);
+      transition: margin-left 0.3s ease, width 0.3s ease;
+    }
+    .main-content-wrapper.collapsed {
+      margin-left: 72px;
+      width: calc(100% - 72px);
+    }
+    .header {
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--border-color);
+      position: fixed;
+      top: 0;
+      width: calc(100% - 240px);
+      z-index: 20;
+      transition: width 0.3s ease;
+    }
+    .main-content-wrapper.collapsed .header {
+      width: calc(100% - 72px);
+    }
+    /* Hide header logo when sidebar is expanded */
+    .header-logo {
+      display: none;
+    }
+    .main-content-wrapper.collapsed .header-logo {
+      display: block;
+    }
+    .main-content {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin-top: 120px;
+    }
+    .video-grid {
+      background-color: var(--bg-color);
+      max-width: 1920px;
+      margin: 0 auto;
+    }
+    .category-tabs {
+      overflow-x: auto;
+      white-space: nowrap;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .category-tabs::-webkit-scrollbar {
+      display: none;
+    }
+    .category-tab {
+      display: inline-block;
+      padding: 8px 16px;
+      margin: 8px 8px 8px 0;
+      background: var(--category-bg);
+      border-radius: 16px;
+      font-size: 14px;
+      color: var(--category-text);
+      cursor: pointer;
+    }
+    .category-tab.active {
+      background: #fff;
+      color: #000;
+    }
+    .light-theme .category-tab.active {
+      background: #000;
+      color: #fff;
+    }
+    .thumbnail {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--card-bg);
+    }
+    .thumbnail iframe {
+      transition: transform 0.3s ease;
+      width: 100%;
+      height: 202px;
+    }
+    .thumbnail:hover iframe {
+      transform: scale(1.05);
+    }
+    .duration {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 2px 6px;
+      font-size: 12px;
+      border-radius: 3px;
+    }
+    .light-theme .duration {
+      background: rgba(255, 255, 255, 0.8);
+      color: #000;
+    }
+    .search-bar {
+      background: var(--search-bg);
+      border-color: var(--border-color);
+    }
+    .video-player {
+      display: none;
+      flex-direction: row;
+      gap: 20px;
+      background: var(--bg-color);
+      color: var(--text-color);
+      margin-top: 56px; /* Adjusted to match header height */
+      padding: 16px;
+    }
+    .main-video {
+      flex: 1;
+    }
+    .main-video iframe {
+      width: 100%;
+      height: 400px;
+    }
+    .video-list {
+      width: 400px;
+      overflow-y: auto;
+      max-height: calc(100vh - 200px);
+    }
+    .video-list-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+      background: var(--card-bg);
+      padding: 5px;
+      border-radius: 5px;
+    }
+    .video-list-item img {
+      width: 120px;
+      height: 68px;
+      margin-right: 10px;
+      border-radius: 5px;
+    }
+    .video-list-item h4 {
+      font-size: 14px;
+      margin: 0;
+      color: var(--text-color);
+    }
+    .video-list-item p {
+      font-size: 12px;
+      color: var(--category-text);
+      margin: 0;
+    }
+    .light-theme .search-bar button {
+      color: #000;
+    }
+    .light-theme .search-bar button:hover {
+      color: #333;
+    }
+    .light-theme .header button {
+      color: #000;
+    }
+    .light-theme .header button:hover {
+      color: #333;
+    }
+    .back-button {
+      margin-bottom: 10px;
+      padding: 8px 16px;
+      background: var(--category-bg);
+      color: var(--category-text);
+      border-radius: 16px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .light-theme .back-button {
+      background: #e0e0e0;
+      color: #666;
+    }
+    #youtube-logo {
+      filter: brightness(100%);
+    }
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 72px;
+      }
+      .sidebar-item span,
+      .sidebar-section-title,
+      .sidebar-logo {
+        display: none;
+      }
+      .sidebar-item i {
+        margin-right: 0;
+        font-size: 24px;
+      }
+      .main-content-wrapper {
+        margin-left: 72px;
+        width: calc(100% - 72px);
+      }
+      .header {
+        width: calc(100% - 72px);
+      }
+      .video-player {
+        flex-direction: column;
+      }
+      .video-list {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="bg-[#0f0f0f] text-white">
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <i class="fas fa-bars text-2xl sidebar-toggle" style="color: var(--text-color);"></i>
+        <img id="sidebar-youtube-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/YouTube_2024_%28white_text%29.svg/2560px-YouTube_2024_%28white_text%29.svg.png" alt="YouTube Logo" class="sidebar-logo" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/YouTube_2024_(white_text).svg/2560px-YouTube_2024_(white_text).svg.png';">
+      </div>
+      <!-- Main Menu -->
+      <div class="sidebar-item">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </div>
+      <div class="sidebar-item">
+        <i class="fas fa-film"></i>
+        <span>Shorts</span>
+      </div>
+      <div class="sidebar-item">
+        <i class="fas fa-inbox"></i>
+        <span>Subscriptions</span>
+      </div>
+      <div class="sidebar-divider"></div>
+      <!-- You Section -->
+      <div class="sidebar-section-title">You</div>
+      <div class="sidebar-item">
+        <i class="fas fa-history"></i>
+        <span>History</span>
+      </div>
+      <div class="sidebar-item">
+        <i class="fas fa-list"></i>
+        <span>Playlists</span>
+      </div>
+      <div class="sidebar-item">
+        <i class="fas fa-clock"></i>
+        <span>Watch Later</span>
+      </div>
+      <div class="sidebar-item">
+        <i class="fas fa-thumbs-up"></i>
+        <span>Liked Videos</span>
+      </div>
+      <div class="sidebar-divider"></div>
+      <!-- Explore Section -->
+      <div class="sidebar-section-title">Explore</div>
+      <div class="sidebar-item">
+        <i class="fas fa-fire"></i>
+        <span>Trending</span>
+      </div>
+      <div class="sidebar-item">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Shopping</span>
+      </div>
+      <div class="sidebar-item">
+        <i class="fas fa-music"></i>
+        <span>Music</span>
+      </div>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-content-wrapper">
+      <!-- Header -->
+      <header class="header">
+        <div class="flex items-center justify-between p-4">
+          <div class="flex items-center space-x-4">
+            <img id="header-youtube-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/YouTube_2024_%28white_text%29.svg/2560px-YouTube_2024_%28white_text%29.svg.png" alt="YouTube Logo" class="h-7 header-logo" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/2560px-YouTube_Logo_2017.svg.png';">
+          </div>
+          <div class="flex-1 max-w-2xl mx-4">
+            <div class="flex items-center search-bar rounded-full px-4 py-2 border">
+              <input type="text" placeholder="Search" class="bg-transparent w-full outline-none text-sm" style="color: var(--text-color);">
+              <button class="text-gray-400 hover:text-white">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <button id="theme-toggle" class="text-gray-400 hover:text-white"><i class="fas fa-adjust text-lg"></i></button>
+            <button class="text-gray-400 hover:text-white"><i class="fas fa-bell text-lg"></i></button>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/MrBeast_2023_%28cropped%29.jpg/960px-MrBeast_2023_%28cropped%29.jpg" alt="User Profile" class="w-8 h-8 rounded-full border border-[#ff0000]">
+          </div>
+        </div>
+        <!-- Category Tabs -->
+        <div class="category-tabs px-4">
+          <span class="category-tab active">All</span>
+          <span class="category-tab">News</span>
+          <span class="category-tab">Live</span>
+          <span class="category-tab">Podcasts</span>
+          <span class="category-tab">Music</span>
+          <span class="category-tab">Boeing 787 Dreamliner</span>
+          <span class="category-tab">Gaming</span>
+          <span class="category-tab">Airliners</span>
+          <span class="category-tab">Tamil Cinema</span>
+          <span class="category-tab">Web Series</span>
+          <span class="category-tab">Dramedy</span>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Video Player Section -->
+        <div id="video-player" class="video-player">
+          <div class="main-video">
+            <button id="back-to-grid" class="back-button">Back to Videos</button>
+            <iframe id="main-video-iframe" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+          <div class="video-list" id="video-list"></div>
+        </div>
+
+        <!-- Video Grid -->
+        <main id="video-grid" class="p-6 video-grid">
+          <h2 class="text-lg font-bold mb-4">Trending American News Videos</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="video-grid-container">
+            <!-- Video Card 1 -->
+            <div class="thumbnail" data-video-id="LIVE_ICE_Protest_LA_001" data-src="https://www.youtube.com/embed/yYoryJ3sa1M?si=y0hvmywpTUPBPSP0">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/yYoryJ3sa1M?si=y0hvmywpTUPBPSP0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: ICE Protests in Los Angeles</h3>
+                <p class="text-xs text-gray-400">Fox News • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 2 -->
+            <div class="thumbnail" data-video-id="LIVE_LA_Wildfires_002" data-src="https://www.youtube.com/embed/eZE131KfV5g?si=YQYqvnZjMwbIDiTk">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/eZE131KfV5g?si=YQYqvnZjMwbIDiTk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Los Angeles Wildfires Update</h3>
+                <p class="text-xs text-gray-400">ABC News • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 3 -->
+            <div class="thumbnail" data-video-id="LIVE_National_Guard_LA_003" data-src="https://www.youtube.com/embed/Rk0wgl9aSDc?si=vTAO1jM4BDFFBbFn">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/R-6TwPtDFfE?si=5ohpUrFfzL3nfpZs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>                <h3 class="text-sm font-medium">LIVE: National Guard Deployment in LA</h3>
+                <p class="text-xs text-gray-400">Fox News • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 4 -->
+            <div class="thumbnail" data-video-id="LIVE_Economic_Policy_004" data-src="https://www.youtube.com/embed/YZ2_4o8PtG8?si=WEC_o0IdFkq7c1FY">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/YZ2_4o8PtG8?si=WEC_o0IdFkq7c1FY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Economic Policy Debate in Washington</h3>
+                <p class="text-xs text-gray-400">NPR • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 5 -->
+            <div class="thumbnail" data-video-id="LIVE_Denver_Protests_005" data-src="https://www.youtube.com/embed/9Mw1QZbgeFc?si=98KDTeEpFcPqbg4l">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Nk5v-CcIRhQ?si=wHJyDZUcmCwB8J_6" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Denver Anti-ICE Protests</h3>
+                <p class="text-xs text-gray-400">CBS News • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 6 -->
+            <div class="thumbnail" data-video-id="LIVE_No_Kings_Protests_006" data-src="https://www.youtube.com/embed/9Mw1QZbgeFc?si=98KDTeEpFcPqbg4l">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/LjBN9Zw4w1I?si=vDexd-5It9zgMzMI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: No Kings Day Protests Nationwide</h3>
+                <p class="text-xs text-gray-400">Fox News • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 7 -->
+            <div class="thumbnail" data-video-id="LIVE_National_Guard_Dispute_007" data-src="https://www.youtube.com/embed/9HZL1aQloas?si=oS88zFTuyOr-mIVm">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/9HZL1aQloas?si=oS88zFTuyOr-mIVm" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: California National Guard Dispute</h3>
+                <p class="text-xs text-gray-400">The Washington Post • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 8 -->
+            <div class="thumbnail" data-video-id="LIVE_Military_Parade_008" data-src="https://www.youtube.com/embed/AN7jpYAepxw?si=imHmqNcKonAsJLfD">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/AN7jpYAepxw?si=imHmqNcKonAsJLfD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Trump’s Military Parade Controversy</h3>
+                <p class="text-xs text-gray-400">CNN • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 9 -->
+            <div class="thumbnail" data-video-id="LIVE_Farm_Workers_ICE_009" data-src="https://www.youtube.com/embed/wdchOf49LZM?si=ZR6L-wdKBVuwUltu">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/wdchOf49LZM?si=ZR6L-wdKBVuwUltu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Farm Workers Protest ICE Sweeps</h3>
+                <p class="text-xs text-gray-400">NPR • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 10 -->
+            <div class="thumbnail" data-video-id="LIVE_LA_Protests_Misinfo_010" data-src="https://www.youtube.com/embed/ADQDd-9vuWU?si=c7MHkS4ZOjFL6OCJ">
+<iframe width="688" height="387" src="https://www.youtube.com/embed/2pn2BZ1vB64" title="Our 10 Favorite Ina Garten Comfort Food Recipe Videos | Barefoot Contessa | Food Network" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Misinformation Spreads in LA Protests</h3>
+                <p class="text-xs text-gray-400">CBS News • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 11 -->
+            <div class="thumbnail" data-video-id="LIVE_Social_Security_Breach_011" data-src="https://www.youtube.com/embed/wdchOf49LZM?si=-kR1HbOL7SsjXvfY">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/UDlwQ-ZLHwY?si=wlaJX-uzsLgRfUNg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Social Security Data Breach Concerns</h3>
+                <p class="text-xs text-gray-400">The New York Times • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 12 -->
+            <div class="thumbnail" data-video-id="LIVE_Bitcoin_Ethics_012" data-src="https://www.youtube.com/embed/CLMUxew30ZY?si=eNrtMVW5_ucu8S_W">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/CLMUxew30ZY?si=eNrtMVW5_ucu8S_W" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Trump’s Bitcoin Venture Ethics Debate</h3>
+                <p class="text-xs text-gray-400">The New York Times • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 13 -->
+            <div class="thumbnail" data-video-id="LIVE_LA_Riots_Leadership_013" data-src="https://www.youtube.com/embed/wfAa1GiNdgM?si=qINaSy043e0Em64r">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/6Y5XRJLmHRs?si=Xs19MCYyT_gIsVKz" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: LA Riots Blamed on Leadership Failures</h3>
+                <p class="text-xs text-gray-400">Fox News • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 14 -->
+            <div class="thumbnail" data-video-id="LIVE_Gaza_Aid_Talks_014" data-src="https://www.youtube.com/embed/HpCCP5NGreo?si=248PTg6VHW9t14Lf">
+<iframe width="688" height="387" src="https://www.youtube.com/embed/zbuBrrV8DK0" title="Live: Is war with Iran ‘America First’? | Will Cain Country" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Gaza Aid Funding Talks Intensify</h3>
+                <p class="text-xs text-gray-400">Axios • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 15 -->
+            <div class="thumbnail" data-video-id="LIVE_Brain_Drain_015" data-src="https://www.youtube.com/embed/J6MqpK91bEA?si=qaTIFW21E1DvulgK">
+<iframe width="688" height="387" src="https://www.youtube.com/embed/EB9AP8yR5eI" title="Unlimited Business Emails for FREE? | Ali Solanki" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Scientists Warn of Brain Drain</h3>
+                <p class="text-xs text-gray-400">Axios • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 16 -->
+            <div class="thumbnail" data-video-id="LIVE_Newsom_Criticism_016" data-src="https://www.youtube.com/embed/xRPjKQtRXR8?si=cDHw-t-qFhwjHCBC">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/67M1c8cpbvg?si=6bImQnLif3f7UGZN" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Newsom Criticizes Trump’s LA Policies</h3>
+                <p class="text-xs text-gray-400">MSNBC • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 17 -->
+            <div class="thumbnail" data-video-id="LIVE_NY_Protests_ICE_017" data-src="https://www.youtube.com/embed/OWa4603KGkQ?si=v5udaD0HPYV7bAV0">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/OWa4603KGkQ?si=v5udaD0HPYV7bAV0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: New York Protests Against ICE Raids</h3>
+                <p class="text-xs text-gray-400">CBS News • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 18 -->
+            <div class="thumbnail" data-video-id="LIVE_Climate_Change_018" data-src="https://www.youtube.com/embed/y4k2lXk1MBw?si=j1-thBxAOSFbjJ0U">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/y4k2lXk1MBw?si=j1-thBxAOSFbjJ0U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Climate Change Impacts Coastal Cities</h3>
+                <p class="text-xs text-gray-400">The Washington Post • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 19 -->
+            <div class="thumbnail" data-video-id="LIVE_Supreme_Court_Immigration_019" data-src="https://www.youtube.com/embed/HpCCP5NGreo?si=Ec9Q46lqUaNPUYn4">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/HpCCP5NGreo?si=Ec9Q46lqUaNPUYn4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Supreme Court Reviews Immigration Case</h3>
+                <p class="text-xs text-gray-400">CNN • Streaming Now</p>
+              </div>
+            </div>
+            <!-- Video Card 20 -->
+            <div class="thumbnail" data-video-id="LIVE_Tech_Regulations_020" data-src="https://www.youtube.com/embed/wfAa1GiNdgM?si=lfrKGN6GfjGDHfgz">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/sqelF9LaAlQ?si=3bP0p8D5F8XG4xWj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Tech Industry Faces New Regulations</h3>
+                <p class="text-xs text-gray-400">The New York Times • Streaming Now</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sidebar Toggle
+    const sidebar = document.querySelector('.sidebar');
+    const mainContentWrapper = document.querySelector('.main-content-wrapper');
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      mainContentWrapper.classList.toggle('collapsed');
+    });
+
+    // Theme Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const sidebarLogo = document.getElementById('sidebar-youtube-logo');
+    const headerLogo = document.getElementById('header-youtube-logo');
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-theme');
+      // Switch logos based on theme
+      if (document.body.classList.contains('light-theme')) {
+        sidebarLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/2560px-YouTube_Logo_2017.svg.png';
+        headerLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/2560px-YouTube_Logo_2017.svg.png';
+      } else {
+        sidebarLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/2560px-YouTube_Logo_2017.svg.png';
+        headerLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/2560px-YouTube_Logo_2017.svg.png';
+      }
+    });
+
+    // Video Playback
+    const videoGrid = document.getElementById('video-grid');
+    const videoPlayer = document.getElementById('video-player');
+    const mainVideoIframe = document.getElementById('main-video-iframe');
+    const videoList = document.getElementById('video-list');
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    const backToGrid = document.getElementById('back-to-grid');
+
+    const videos = Array.from(thumbnails).map(thumbnail => ({
+      id: thumbnail.dataset.videoId,
+      src: thumbnail.dataset.src,
+      title: thumbnail.querySelector('h3').textContent,
+      meta: thumbnail.querySelector('p').textContent,
+      thumbnail: `https://img.youtube.com/vi/${thumbnail.dataset.src.split('/embed/')[1].split('?')[0]}/0.jpg`
+    }));
+
+    thumbnails.forEach(thumbnail => {
+      thumbnail.addEventListener('click', () => {
+        const videoId = thumbnail.dataset.videoId;
+        const selectedVideo = videos.find(video => video.id === videoId);
+
+        // Show video player and hide grid
+        videoGrid.style.display = 'none';
+        videoPlayer.style.display = 'flex';
+
+        // Set main video
+        mainVideoIframe.src = selectedVideo.src;
+
+        // Populate video list
+        videoList.innerHTML = '';
+        videos.forEach(video => {
+          if (video.id !== videoId) {
+            const listItem = document.createElement('div');
+            listItem.className = 'video-list-item';
+            listItem.innerHTML = `
+              <img src="${video.thumbnail}" alt="${video.title}">
+              <div>
+                <h4>${video.title}</h4>
+                <p>${video.meta}</p>
+              </div>
+            `;
+            listItem.addEventListener('click', () => {
+              mainVideoIframe.src = video.src;
+              updateVideoList(video.id);
+            });
+            videoList.appendChild(listItem);
+          }
+        });
+      });
+    });
+
+    function updateVideoList(selectedId) {
+      videoList.innerHTML = '';
+      videos.forEach(video => {
+        if (video.id !== selectedId) {
+          const listItem = document.createElement('div');
+          listItem.className = 'video-list-item';
+          listItem.innerHTML = `
+            <img src="${video.thumbnail}" alt="${video.title}">
+            <div>
+              <h4>${video.title}</h4>
+              <p>${video.meta}</p>
+            </div>
+          `;
+          listItem.addEventListener('click', () => {
+            mainVideoIframe.src = video.src;
+            updateVideoList(video.id);
+          });
+          videoList.appendChild(listItem);
+        }
+      });
+    }
+
+    // Back to Video Grid
+    backToGrid.addEventListener('click', () => {
+      videoGrid.style.display = 'block';
+      videoPlayer.style.display = 'none';
+      mainVideoIframe.src = ''; // Stop the video
+    });
+  </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YouTube - Trending American News</title>
+  <title>YouTube - Trending Videos</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
@@ -40,7 +40,6 @@
     .container {
       display: flex;
     }
-    /* Sidebar Styles */
     .sidebar {
       width: 240px;
       background: var(--sidebar-bg);
@@ -107,7 +106,6 @@
     .sidebar.collapsed .sidebar-logo {
       display: none;
     }
-    /* Main Content Adjustment */
     .main-content-wrapper {
       margin-left: 240px;
       width: calc(100% - 240px);
@@ -129,7 +127,6 @@
     .main-content-wrapper.collapsed .header {
       width: calc(100% - 72px);
     }
-    /* Hide header logo when sidebar is expanded */
     .header-logo {
       display: none;
     }
@@ -211,45 +208,54 @@
       gap: 20px;
       background: var(--bg-color);
       color: var(--text-color);
-      margin-top: 56px; /* Adjusted to match header height */
+      margin-top: 56px;
       padding: 16px;
+      max-width: 1920px;
+      margin-left: auto;
+      margin-right: auto;
     }
     .main-video {
-      flex: 1;
+      flex: 0 0 60%;
+      max-width: 60%;
     }
     .main-video iframe {
       width: 100%;
-      height: 400px;
+      height: 450px;
+      aspect-ratio: 16 / 9;
     }
     .video-list {
-      width: 400px;
+      flex: 0 0 40%;
+      max-width: 40%;
       overflow-y: auto;
       max-height: calc(100vh - 200px);
     }
     .video-list-item {
       display: flex;
-      align-items: center;
-      margin-bottom: 10px;
+      align-items: flex-start;
+      margin-bottom: 16px;
       cursor: pointer;
       background: var(--card-bg);
-      padding: 5px;
+      padding: 8px;
       border-radius: 5px;
     }
     .video-list-item img {
-      width: 120px;
-      height: 68px;
-      margin-right: 10px;
+      width: 168px;
+      height: 94px;
+      margin-right: 12px;
       border-radius: 5px;
+      object-fit: cover;
     }
     .video-list-item h4 {
       font-size: 14px;
-      margin: 0;
+      margin: 0 0 4px 0;
       color: var(--text-color);
+      line-height: 1.3;
     }
     .video-list-item p {
       font-size: 12px;
       color: var(--category-text);
       margin: 0;
+      line-height: 1.2;
     }
     .light-theme .search-bar button {
       color: #000;
@@ -279,7 +285,6 @@
     #youtube-logo {
       filter: brightness(100%);
     }
-    /* Responsive Design */
     @media (max-width: 768px) {
       .sidebar {
         width: 72px;
@@ -303,21 +308,31 @@
       .video-player {
         flex-direction: column;
       }
+      .main-video {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+      .main-video iframe {
+        height: auto;
+      }
       .video-list {
-        width: 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+      .video-list-item img {
+        width: 120px;
+        height: 68px;
       }
     }
   </style>
 </head>
 <body class="bg-[#0f0f0f] text-white">
   <div class="container">
-    <!-- Sidebar -->
     <div class="sidebar">
       <div class="sidebar-header">
         <i class="fas fa-bars text-2xl sidebar-toggle" style="color: var(--text-color);"></i>
         <img id="sidebar-youtube-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/YouTube_2024_%28white_text%29.svg/2560px-YouTube_2024_%28white_text%29.svg.png" alt="YouTube Logo" class="sidebar-logo" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/YouTube_2024_(white_text).svg/2560px-YouTube_2024_(white_text).svg.png';">
       </div>
-      <!-- Main Menu -->
       <div class="sidebar-item">
         <i class="fas fa-home"></i>
         <span>Home</span>
@@ -331,7 +346,6 @@
         <span>Subscriptions</span>
       </div>
       <div class="sidebar-divider"></div>
-      <!-- You Section -->
       <div class="sidebar-section-title">You</div>
       <div class="sidebar-item">
         <i class="fas fa-history"></i>
@@ -350,7 +364,6 @@
         <span>Liked Videos</span>
       </div>
       <div class="sidebar-divider"></div>
-      <!-- Explore Section -->
       <div class="sidebar-section-title">Explore</div>
       <div class="sidebar-item">
         <i class="fas fa-fire"></i>
@@ -366,9 +379,7 @@
       </div>
     </div>
 
-    <!-- Main Content Wrapper -->
     <div class="main-content-wrapper">
-      <!-- Header -->
       <header class="header">
         <div class="flex items-center justify-between p-4">
           <div class="flex items-center space-x-4">
@@ -388,7 +399,6 @@
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/MrBeast_2023_%28cropped%29.jpg/960px-MrBeast_2023_%28cropped%29.jpg" alt="User Profile" class="w-8 h-8 rounded-full border border-[#ff0000]">
           </div>
         </div>
-        <!-- Category Tabs -->
         <div class="category-tabs px-4">
           <span class="category-tab active">All</span>
           <span class="category-tab">News</span>
@@ -404,9 +414,7 @@
         </div>
       </header>
 
-      <!-- Main Content -->
       <div class="main-content">
-        <!-- Video Player Section -->
         <div id="video-player" class="video-player">
           <div class="main-video">
             <button id="back-to-grid" class="back-button">Back to Videos</button>
@@ -415,169 +423,159 @@
           <div class="video-list" id="video-list"></div>
         </div>
 
-        <!-- Video Grid -->
         <main id="video-grid" class="p-6 video-grid">
-          <h2 class="text-lg font-bold mb-4">Trending American News Videos</h2>
+          <h2 class="text-lg font-bold mb-4">Trending Videos</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="video-grid-container">
-            <!-- Video Card 1 -->
             <div class="thumbnail" data-video-id="LIVE_ICE_Protest_LA_001" data-src="https://www.youtube.com/embed/yYoryJ3sa1M?si=y0hvmywpTUPBPSP0">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/yYoryJ3sa1M?si=y0hvmywpTUPBPSP0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/yYoryJ3sa1M?si=y0hvmywpTUPBPSP0" title="LIVE: ICE Protests in Los Angeles" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               <div class="mt-3">
                 <h3 class="text-sm font-medium">LIVE: ICE Protests in Los Angeles</h3>
                 <p class="text-xs text-gray-400">Fox News • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 2 -->
             <div class="thumbnail" data-video-id="LIVE_LA_Wildfires_002" data-src="https://www.youtube.com/embed/eZE131KfV5g?si=YQYqvnZjMwbIDiTk">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/eZE131KfV5g?si=YQYqvnZjMwbIDiTk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/eZE131KfV5g?si=YQYqvnZjMwbIDiTk" title="LIVE: Los Angeles Wildfires Update" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               <div class="mt-3">
                 <h3 class="text-sm font-medium">LIVE: Los Angeles Wildfires Update</h3>
                 <p class="text-xs text-gray-400">ABC News • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 3 -->
-            <div class="thumbnail" data-video-id="LIVE_National_Guard_LA_003" data-src="https://www.youtube.com/embed/Rk0wgl9aSDc?si=vTAO1jM4BDFFBbFn">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/R-6TwPtDFfE?si=5ohpUrFfzL3nfpZs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>                <h3 class="text-sm font-medium">LIVE: National Guard Deployment in LA</h3>
+            <div class="thumbnail" data-video-id="LIVE_National_Guard_LA_003" data-src="https://www.youtube.com/embed/R-6TwPtDFfE?si=5ohpUrFfzL3nfpZs">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/R-6TwPtDFfE?si=5ohpUrFfzL3nfpZs" title="LIVE: National Guard Deployment in Los Angeles" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: National Guard Deployment in Los Angeles</h3>
                 <p class="text-xs text-gray-400">Fox News • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 4 -->
             <div class="thumbnail" data-video-id="LIVE_Economic_Policy_004" data-src="https://www.youtube.com/embed/YZ2_4o8PtG8?si=WEC_o0IdFkq7c1FY">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/YZ2_4o8PtG8?si=WEC_o0IdFkq7c1FY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/YZ2_4o8PtG8?si=WEC_o0IdFkq7c1FY" title="LIVE: Economic Policy Debate" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               <span class="duration">LIVE</span>
               <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: Economic Policy Debate in Washington</h3>
+                <h3 class="text-sm font-medium">LIVE: Economic Policy Debate</h3>
                 <p class="text-xs text-gray-400">NPR • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 5 -->
-            <div class="thumbnail" data-video-id="LIVE_Denver_Protests_005" data-src="https://www.youtube.com/embed/9Mw1QZbgeFc?si=98KDTeEpFcPqbg4l">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Nk5v-CcIRhQ?si=wHJyDZUcmCwB8J_6" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <span class="duration">LIVE</span>
+            <div class="thumbnail" data-video-id="LIVE_Denver_Protests_005" data-src="https://www.youtube.com/embed/Nk5v-CcIRhQ?si=wHJyDZUcmCwB8J_6">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/Nk5v-CcIRhQ?si=wHJyDZUcmCwB8J_6" title="LIVE: Anti-ICE Protests in Denver" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <span class="duration">LIVE</span>
               <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: Denver Anti-ICE Protests</h3>
+                <h3 class="text-sm font-medium">LIVE: Anti-ICE Protests in Denver</h3>
                 <p class="text-xs text-gray-400">CBS News • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 6 -->
-            <div class="thumbnail" data-video-id="LIVE_No_Kings_Protests_006" data-src="https://www.youtube.com/embed/9Mw1QZbgeFc?si=98KDTeEpFcPqbg4l">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/LjBN9Zw4w1I?si=vDexd-5It9zgMzMI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <div class="mt-3">
+            <div class="thumbnail" data-video-id="LIVE_No_Kings_Protests_006" data-src="https://www.youtube.com/embed/LjBN9Zw4w1I?si=vDexd-5It9zgMzMI">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/LjBN9Zw4w1I?si=vDexd-5It9zgMzMI" title="LIVE: No Kings Day Protests Nationwide" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <div class="mt-3">
                 <h3 class="text-sm font-medium">LIVE: No Kings Day Protests Nationwide</h3>
                 <p class="text-xs text-gray-400">Fox News • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 7 -->
             <div class="thumbnail" data-video-id="LIVE_National_Guard_Dispute_007" data-src="https://www.youtube.com/embed/9HZL1aQloas?si=oS88zFTuyOr-mIVm">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/9HZL1aQloas?si=oS88zFTuyOr-mIVm" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/9HZL1aQloas?si=oS88zFTuyOr-mIVm" title="LIVE: California National Guard Dispute" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               <span class="duration">LIVE</span>
               <div class="mt-3">
                 <h3 class="text-sm font-medium">LIVE: California National Guard Dispute</h3>
                 <p class="text-xs text-gray-400">The Washington Post • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 8 -->
             <div class="thumbnail" data-video-id="LIVE_Military_Parade_008" data-src="https://www.youtube.com/embed/AN7jpYAepxw?si=imHmqNcKonAsJLfD">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/AN7jpYAepxw?si=imHmqNcKonAsJLfD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/AN7jpYAepxw?si=imHmqNcKonAsJLfD" title="LIVE: Trump’s Military Parade Controversy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               <span class="duration">LIVE</span>
               <div class="mt-3">
                 <h3 class="text-sm font-medium">LIVE: Trump’s Military Parade Controversy</h3>
                 <p class="text-xs text-gray-400">CNN • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 9 -->
             <div class="thumbnail" data-video-id="LIVE_Farm_Workers_ICE_009" data-src="https://www.youtube.com/embed/wdchOf49LZM?si=ZR6L-wdKBVuwUltu">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/wdchOf49LZM?si=ZR6L-wdKBVuwUltu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/wdchOf49LZM?si=ZR6L-wdKBVuwUltu" title="LIVE: Farm Workers Protest ICE Raids" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               <span class="duration">LIVE</span>
               <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: Farm Workers Protest ICE Sweeps</h3>
+                <h3 class="text-sm font-medium">LIVE: Farm Workers Protest ICE Raids</h3>
                 <p class="text-xs text-gray-400">NPR • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 10 -->
-            <div class="thumbnail" data-video-id="LIVE_LA_Protests_Misinfo_010" data-src="https://www.youtube.com/embed/ADQDd-9vuWU?si=c7MHkS4ZOjFL6OCJ">
-<iframe width="688" height="387" src="https://www.youtube.com/embed/2pn2BZ1vB64" title="Our 10 Favorite Ina Garten Comfort Food Recipe Videos | Barefoot Contessa | Food Network" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <span class="duration">LIVE</span>
-              <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: Misinformation Spreads in LA Protests</h3>
-                <p class="text-xs text-gray-400">CBS News • Streaming Now</p>
-              </div>
-            </div>
-            <!-- Video Card 11 -->
-            <div class="thumbnail" data-video-id="LIVE_Social_Security_Breach_011" data-src="https://www.youtube.com/embed/wdchOf49LZM?si=-kR1HbOL7SsjXvfY">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/UDlwQ-ZLHwY?si=wlaJX-uzsLgRfUNg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: Social Security Data Breach Concerns</h3>
-                <p class="text-xs text-gray-400">The New York Times • Streaming Now</p>
-              </div>
-            </div>
-            <!-- Video Card 12 -->
-            <div class="thumbnail" data-video-id="LIVE_Bitcoin_Ethics_012" data-src="https://www.youtube.com/embed/CLMUxew30ZY?si=eNrtMVW5_ucu8S_W">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/CLMUxew30ZY?si=eNrtMVW5_ucu8S_W" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <div class="thumbnail" data-video-id="LIVE_LA_Protests_Misinfo_010" data-src="https://www.youtube.com/embed/2pn2BZ1vB64">
+              <iframe width="688" height="387" src="https://www.youtube.com/embed/2pn2BZ1vB64" title="Top 10 Ina Garten Comfort Food Recipes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               <span class="duration">LIVE</span>
               <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: Trump’s Bitcoin Venture Ethics Debate</h3>
+                <h3 class="text-sm font-medium">Top 10 Ina Garten Comfort Food Recipes</h3>
+                <p class="text-xs text-gray-400">Food Network • Streaming Now</p>
+              </div>
+            </div>
+            <div class="thumbnail" data-video-id="LIVE_Social_Security_Breach_011" data-src="https://www.youtube.com/embed/UDlwQ-ZLHwY?si=wlaJX-uzsLgRfUNg">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/UDlwQ-ZLHwY?si=wlaJX-uzsLgRfUNg" title="LIVE: Social Security Data Breach Updates" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Social Security Data Breach Updates</h3>
                 <p class="text-xs text-gray-400">The New York Times • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 13 -->
-            <div class="thumbnail" data-video-id="LIVE_LA_Riots_Leadership_013" data-src="https://www.youtube.com/embed/wfAa1GiNdgM?si=qINaSy043e0Em64r">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/6Y5XRJLmHRs?si=Xs19MCYyT_gIsVKz" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: LA Riots Blamed on Leadership Failures</h3>
+            <div class="thumbnail" data-video-id="LIVE_Bitcoin_Ethics_012" data-src="https://www.youtube.com/embed/CLMUxew30ZY?si=eNrtMVW5_ucu8S_W">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/CLMUxew30ZY?si=eNrtMVW5_ucu8S_W" title="LIVE: Bitcoin Ethics Debate" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <span class="duration">LIVE</span>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Bitcoin Ethics Debate</h3>
+                <p class="text-xs text-gray-400">The New York Times • Streaming Now</p>
+              </div>
+            </div>
+            <div class="thumbnail" data-video-id="LIVE_LA_Riots_Leadership_013" data-src="https://www.youtube.com/embed/6Y5XRJLmHRs?si=Xs19MCYyT_gIsVKz">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/6Y5XRJLmHRs?si=Xs19MCYyT_gIsVKz" title="LIVE: LA Riots and Leadership Failures" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: LA Riots and Leadership Failures</h3>
                 <p class="text-xs text-gray-400">Fox News • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 14 -->
-            <div class="thumbnail" data-video-id="LIVE_Gaza_Aid_Talks_014" data-src="https://www.youtube.com/embed/HpCCP5NGreo?si=248PTg6VHW9t14Lf">
-<iframe width="688" height="387" src="https://www.youtube.com/embed/zbuBrrV8DK0" title="Live: Is war with Iran ‘America First’? | Will Cain Country" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <span class="duration">LIVE</span>
+            <div class="thumbnail" data-video-id="LIVE_Gaza_Aid_Talks_014" data-src="https://www.youtube.com/embed/zbuBrrV8DK0">
+              <iframe width="688" height="387" src="https://www.youtube.com/embed/zbuBrrV8DK0" title="LIVE: Is War with Iran ‘America First’?" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <span class="duration">LIVE</span>
               <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: Gaza Aid Funding Talks Intensify</h3>
-                <p class="text-xs text-gray-400">Axios • Streaming Now</p>
+                <h3 class="text-sm font-medium">LIVE: Is War with Iran ‘America First’?</h3>
+                <p class="text-xs text-gray-400">Will Cain Country • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 15 -->
-            <div class="thumbnail" data-video-id="LIVE_Brain_Drain_015" data-src="https://www.youtube.com/embed/J6MqpK91bEA?si=qaTIFW21E1DvulgK">
-<iframe width="688" height="387" src="https://www.youtube.com/embed/EB9AP8yR5eI" title="Unlimited Business Emails for FREE? | Ali Solanki" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <span class="duration">LIVE</span>
+            <div class="thumbnail" data-video-id="LIVE_Brain_Drain_015" data-src="https://www.youtube.com/embed/EB9AP8yR5eI">
+              <iframe width="688" height="387" src="https://www.youtube.com/embed/EB9AP8yR5eI" title="LIVE: Free Unlimited Business Emails" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <span class="duration">LIVE</span>
               <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: Scientists Warn of Brain Drain</h3>
-                <p class="text-xs text-gray-400">Axios • Streaming Now</p>
+                <h3 class="text-sm font-medium">LIVE: Free Unlimited Business Emails</h3>
+                <p class="text-xs text-gray-400">Ali Solanki • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 16 -->
-            <div class="thumbnail" data-video-id="LIVE_Newsom_Criticism_016" data-src="https://www.youtube.com/embed/xRPjKQtRXR8?si=cDHw-t-qFhwjHCBC">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/67M1c8cpbvg?si=6bImQnLif3f7UGZN" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <span class="duration">LIVE</span>
+            <div class="thumbnail" data-video-id="LIVE_Newsom_Criticism_016" data-src="https://www.youtube.com/embed/67M1c8cpbvg?si=6bImQnLif3f7UGZN">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/67M1c8cpbvg?si=6bImQnLif3f7UGZN" title="LIVE: Newsom Critiques LA Policies" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <span class="duration">LIVE</span>
               <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: Newsom Criticizes Trump’s LA Policies</h3>
+                <h3 class="text-sm font-medium">LIVE: Newsom Critiques LA Policies</h3>
                 <p class="text-xs text-gray-400">MSNBC • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 17 -->
             <div class="thumbnail" data-video-id="LIVE_NY_Protests_ICE_017" data-src="https://www.youtube.com/embed/OWa4603KGkQ?si=v5udaD0HPYV7bAV0">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/OWa4603KGkQ?si=v5udaD0HPYV7bAV0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/OWa4603KGkQ?si=v5udaD0HPYV7bAV0" title="LIVE: New York Anti-ICE Protests" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               <span class="duration">LIVE</span>
               <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: New York Protests Against ICE Raids</h3>
+                <h3 class="text-sm font-medium">LIVE: New York Anti-ICE Protests</h3>
                 <p class="text-xs text-gray-400">CBS News • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 18 -->
             <div class="thumbnail" data-video-id="LIVE_Climate_Change_018" data-src="https://www.youtube.com/embed/y4k2lXk1MBw?si=j1-thBxAOSFbjJ0U">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/y4k2lXk1MBw?si=j1-thBxAOSFbjJ0U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/y4k2lXk1MBw?si=j1-thBxAOSFbjJ0U" title="LIVE: Climate Change and Coastal Cities" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               <span class="duration">LIVE</span>
               <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: Climate Change Impacts Coastal Cities</h3>
+                <h3 class="text-sm font-medium">LIVE: Climate Change and Coastal Cities</h3>
                 <p class="text-xs text-gray-400">The Washington Post • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 19 -->
             <div class="thumbnail" data-video-id="LIVE_Supreme_Court_Immigration_019" data-src="https://www.youtube.com/embed/HpCCP5NGreo?si=Ec9Q46lqUaNPUYn4">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/HpCCP5NGreo?si=Ec9Q46lqUaNPUYn4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/HpCCP5NGreo?si=Ec9Q46lqUaNPUYn4" title="LIVE: Supreme Court Immigration Review" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               <span class="duration">LIVE</span>
               <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: Supreme Court Reviews Immigration Case</h3>
+                <h3 class="text-sm font-medium">LIVE: Supreme Court Immigration Review</h3>
                 <p class="text-xs text-gray-400">CNN • Streaming Now</p>
               </div>
             </div>
-            <!-- Video Card 20 -->
-            <div class="thumbnail" data-video-id="LIVE_Tech_Regulations_020" data-src="https://www.youtube.com/embed/wfAa1GiNdgM?si=lfrKGN6GfjGDHfgz">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/sqelF9LaAlQ?si=3bP0p8D5F8XG4xWj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>              <div class="mt-3">
-                <h3 class="text-sm font-medium">LIVE: Tech Industry Faces New Regulations</h3>
+            <div class="thumbnail" data-video-id="LIVE_Tech_Regulations_020" data-src="https://www.youtube.com/embed/sqelF9LaAlQ?si=3bP0p8D5F8XG4xWj">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/sqelF9LaAlQ?si=3bP0p8D5F8XG4xWj" title="LIVE: Tech Industry Regulation Updates" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <div class="mt-3">
+                <h3 class="text-sm font-medium">LIVE: Tech Industry Regulation Updates</h3>
                 <p class="text-xs text-gray-400">The New York Times • Streaming Now</p>
               </div>
             </div>
@@ -588,7 +586,6 @@
   </div>
 
   <script>
-    // Sidebar Toggle
     const sidebar = document.querySelector('.sidebar');
     const mainContentWrapper = document.querySelector('.main-content-wrapper');
     const sidebarToggle = document.querySelector('.sidebar-toggle');
@@ -597,23 +594,20 @@
       mainContentWrapper.classList.toggle('collapsed');
     });
 
-    // Theme Toggle
     const themeToggle = document.getElementById('theme-toggle');
     const sidebarLogo = document.getElementById('sidebar-youtube-logo');
     const headerLogo = document.getElementById('header-youtube-logo');
     themeToggle.addEventListener('click', () => {
       document.body.classList.toggle('light-theme');
-      // Switch logos based on theme
       if (document.body.classList.contains('light-theme')) {
         sidebarLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/2560px-YouTube_Logo_2017.svg.png';
         headerLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/2560px-YouTube_Logo_2017.svg.png';
       } else {
-        sidebarLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/2560px-YouTube_Logo_2017.svg.png';
-        headerLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/2560px-YouTube_Logo_2017.svg.png';
+        sidebarLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/YouTube_2024_%28white_text%29.svg/2560px-YouTube_2024_%28white_text%29.svg.png';
+        headerLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/YouTube_2024_%28white_text%29.svg/2560px-YouTube_2024_%28white_text%29.svg.png';
       }
     });
 
-    // Video Playback
     const videoGrid = document.getElementById('video-grid');
     const videoPlayer = document.getElementById('video-player');
     const mainVideoIframe = document.getElementById('main-video-iframe');
@@ -634,14 +628,11 @@
         const videoId = thumbnail.dataset.videoId;
         const selectedVideo = videos.find(video => video.id === videoId);
 
-        // Show video player and hide grid
         videoGrid.style.display = 'none';
         videoPlayer.style.display = 'flex';
 
-        // Set main video
         mainVideoIframe.src = selectedVideo.src;
 
-        // Populate video list
         videoList.innerHTML = '';
         videos.forEach(video => {
           if (video.id !== videoId) {
@@ -686,11 +677,10 @@
       });
     }
 
-    // Back to Video Grid
     backToGrid.addEventListener('click', () => {
       videoGrid.style.display = 'block';
       videoPlayer.style.display = 'none';
-      mainVideoIframe.src = ''; // Stop the video
+      mainVideoIframe.src = '';
     });
   </script>
 </body>
